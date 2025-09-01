@@ -1,0 +1,12 @@
+management:
+  endpoints:
+    web:
+      base-path: /userService/actuator
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+  health:
+    mongo:
+      enabled: true

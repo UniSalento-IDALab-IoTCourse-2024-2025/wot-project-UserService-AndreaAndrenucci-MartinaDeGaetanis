@@ -1,0 +1,46 @@
+services:
+
+  my-sba:
+    image: openjdk:21
+    container_name: my-sba-UserService-DigitAIR
+    ports:
+      - 8081:8080
+      - 8001:8000
+    expose:
+      - "8001"
+    depends_on:
+      - my-db
+    networks:
+      - microservices_network
+      - krakend-net
+    volumes:
+      - ./build/libs/UserService-0.0.1-SNAPSHOT.jar:/app/app.jar
+    working_dir: /app
+    entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
+  my-db:
+    image: mongo:5.0
+    container_name: mongodb-UserService-DigitAIR
+    command: mongod --port 27012
+    ports:
+      - 27012:27012
+    networks:
+      - microservices_network
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express-UserService-DigitAIR
+    ports:
+      - 8079:8081
+    restart: always
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb-UserService-DigitAIR
+      - ME_CONFIG_MONGODB_PORT=27012
+    depends_on:
+      - my-db
+    networks:
+      - microservices_network
+networks:
+  microservices_network:
+    external: true
+  krakend-net:
+    external: true
+
